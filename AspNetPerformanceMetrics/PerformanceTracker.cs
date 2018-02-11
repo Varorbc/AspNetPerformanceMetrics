@@ -28,7 +28,7 @@ namespace AspNetPerformance
         /// </summary>
         private List<PerformanceMetricBase> performanceMetrics;
 
-        internal void ProcessActionStart()
+        public void ProcessActionStart()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace AspNetPerformance
             }
         }
 
-        internal void ProcessActionComplete(bool unhandledExceptionFlag)
+        public void ProcessActionComplete(bool unhandledExceptionFlag)
         {
             try
             {

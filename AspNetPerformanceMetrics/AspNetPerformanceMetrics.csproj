@@ -7,6 +7,7 @@
     <RepositoryUrl>https://github.com/Varorbc/AspNetPerformanceMetrics.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/Varorbc/AspNetPerformanceMetrics</PackageProjectUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -17,13 +18,10 @@
 
   <ItemGroup>
     <PackageReference Include="Metrics.NET" Version="0.5.3" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.3" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web" />
   </ItemGroup>
 
 </Project>
