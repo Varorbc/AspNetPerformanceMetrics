@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
-using System.Diagnostics;
-using AspNetPerformance.Metrics;
+﻿using System.Linq;
 using System.Web;
-using System.Threading.Tasks;
-
+using System.Web.Mvc;
 
 namespace AspNetPerformance
 {
@@ -16,16 +9,10 @@ namespace AspNetPerformance
     /// </summary>    
     public class MvcPerformanceAttribute : ActionFilterAttribute
     {
-
-        public MvcPerformanceAttribute()
-        {
-        }
-
         /// <summary>
         /// Constant to identify MVC Action Types (used in the instance name)
         /// </summary>
-        public const String ACTION_TYPE = "MVC";
-
+        public const string ACTION_TYPE = "MVC";
 
         /// <summary>
         /// Method called before the action method starts processing
@@ -34,11 +21,11 @@ namespace AspNetPerformance
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             // First thing is to check if performance is enabled globally.  If not, return
-            if ( ConfigInfo.Value.PerformanceEnabled == false)
+            if (ConfigInfo.Value.PerformanceEnabled == false)
             {
                 return;
             }
-            
+
             // Second thing, check if performance tracking has been turned off for this action
             // If the DoNotTrackAttribute is present, then return
             ActionDescriptor actionDescriptor = filterContext.ActionDescriptor;
@@ -50,20 +37,19 @@ namespace AspNetPerformance
             }
 
             // ActionInfo encapsulates all the info about the action being invoked
-            ActionInfo info = this.CreateActionInfo(filterContext);
+            ActionInfo info = CreateActionInfo(filterContext);
 
             // PerformanceTracker is the object that tracks performance and is attached to the request
             PerformanceTracker tracker = new PerformanceTracker(info);
-           
+
             // Store this on the request
-            String contextKey = this.GetUniqueContextKey(filterContext.ActionDescriptor.UniqueId);
+            string contextKey = GetUniqueContextKey(filterContext.ActionDescriptor.UniqueId);
             HttpContext.Current.Items.Add(contextKey, tracker);
-                        
+
             // Process the action start - this is what starts the timer and increments any
             // required counters before the action executes
             tracker.ProcessActionStart();
         }
-
 
         /// <summary>
         /// Method called after the action method has completed executing
@@ -77,7 +63,7 @@ namespace AspNetPerformance
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             // This is the unique key the PerformanceTracker object would be stored under
-            String contextKey = this.GetUniqueContextKey(filterContext.ActionDescriptor.UniqueId);
+            string contextKey = GetUniqueContextKey(filterContext.ActionDescriptor.UniqueId);
 
             // Check if there is an object on the request.  If not, must not be tracking performance
             // for this action, so just go ahead and return
@@ -88,17 +74,11 @@ namespace AspNetPerformance
 
             // If we are here, we are tracking performance.  Extract the object from the request and call
             // ProcessActionComplete.  This will stop the stopwatch and update the performance metrics
-            PerformanceTracker tracker = HttpContext.Current.Items[contextKey] as PerformanceTracker;
-
-            if (tracker != null)
+            if (HttpContext.Current.Items[contextKey] is PerformanceTracker tracker)
             {
-                bool exceptionThrown = (filterContext.Exception != null);
-                tracker.ProcessActionComplete(exceptionThrown);
+                tracker.ProcessActionComplete(filterContext.Exception != null);
             }
         }
-
-
-        #region Helper Methdos
 
         /// <summary>
         /// Helper method to create the ActionInfo object containing the info about the action that is getting called
@@ -108,20 +88,19 @@ namespace AspNetPerformance
         private ActionInfo CreateActionInfo(ActionExecutingContext actionContext)
         {
             var parameters = actionContext.ActionDescriptor.GetParameters().Select(p => p.ParameterName);
-            String parameterString = String.Join(",", parameters);
+            string parameterString = string.Join(",", parameters);
 
             int processId = ConfigInfo.Value.ProcessId;
-            String controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
-            String actionName = actionContext.ActionDescriptor.ActionName;
-            String httpMethod = HttpContext.Current.Request.HttpMethod;
+            string controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+            string actionName = actionContext.ActionDescriptor.ActionName;
+            string httpMethod = HttpContext.Current.Request.HttpMethod;
             int contentLength = HttpContext.Current.Request.ContentLength;
 
             ActionInfo info = new ActionInfo(processId, ACTION_TYPE,
-                controllerName, actionName, httpMethod, parameterString,contentLength);
+                controllerName, actionName, httpMethod, parameterString, contentLength);
 
             return info;
         }
-
 
         /// <summary>
         /// Helper method to form the key that will be used to store/retrieve the PerformanceTracker object
@@ -131,13 +110,11 @@ namespace AspNetPerformance
         /// To minimize any chance of collisions, this method concatenates the full name of this class
         /// with the UniqueID of the MVC action to get a unique key to use
         /// </remarks>
-        /// <param name="actionUniqueId">A String of the unique id assigned by ASP.NET to the MVC action</param>
+        /// <param name="actionUniqueId">A string of the unique id assigned by ASP.NET to the MVC action</param>
         /// <returns>A Strin suitable to be used for the key</returns>
-        private String GetUniqueContextKey(String actionUniqueId)
+        private string GetUniqueContextKey(string actionUniqueId)
         {
-            return this.GetType().FullName + ":" + actionUniqueId;
+            return GetType().FullName + ":" + actionUniqueId;
         }
-
-        #endregion
     }
 }

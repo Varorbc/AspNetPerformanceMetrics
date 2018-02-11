@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AspNetPerformance
 {
-
     /// <summary>
     /// A marker attribute used to decorate actions or controllers where performance data should
     /// not be gathered

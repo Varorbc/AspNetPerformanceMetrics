@@ -1,36 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 
 namespace AspNetPerformance.Metrics
 {
-
     /// <summary>
     /// Base class for all performance metric objects
     /// </summary>
     public abstract class PerformanceMetricBase : IDisposable
     {
-
         /// <summary>
         /// Creates a new PerformanceMetricBase object that will update data for the
         /// action described by the given ActionInfo object
         /// </summary>
         /// <param name="info">An ActionInfo object that contains data about the action 
         /// that was called</param>
-        public PerformanceMetricBase(ActionInfo info)
-        {
-            this.actionInfo = info;            
-        }
-
+        public PerformanceMetricBase(ActionInfo info) => actionInfo = info;
 
         /// <summary>
         /// Gets the object that contains info on the action that was called and is 
         /// having perfomance tracked
         /// </summary>
         protected ActionInfo actionInfo;
-
 
         /// <summary>
         /// Method called by the custom action filter after the action completes
@@ -44,7 +34,6 @@ namespace AspNetPerformance.Metrics
         /// </remarks>
         public virtual void OnActionStart()
         {
-
         }
 
         /// <summary>
@@ -61,9 +50,7 @@ namespace AspNetPerformance.Metrics
         /// <param name="exceptionThrown">A bool if an uncaught exception was thrown during the processing of this action</param>
         public virtual void OnActionComplete(long elapsedTicks, bool exceptionThrown)
         {
-
         }
-      
 
         /// <summary>
         /// Helper method to convert ticks from the Stopwatch class to milliseconds
@@ -76,10 +63,9 @@ namespace AspNetPerformance.Metrics
         /// <returns>A long of the corresponding value in milliseconds</returns>
         protected long ConvertTicksToMilliseconds(long elapsedTicks)
         {
-            decimal d =  Math.Round(1000 * (decimal)elapsedTicks / Stopwatch.Frequency);
+            decimal d = Math.Round(1000 * (decimal)elapsedTicks / Stopwatch.Frequency);
             return Convert.ToInt64(d);
         }
-
 
         /// <summary>
         /// Abstract method where concrete implementations should call Dispose() on 
@@ -88,6 +74,5 @@ namespace AspNetPerformance.Metrics
         public virtual void Dispose()
         {
         }
-
     }
 }

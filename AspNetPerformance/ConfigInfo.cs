@@ -1,27 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Configuration;
 using System.Diagnostics;
 
 namespace AspNetPerformance
 {
-
     /// <summary>
     /// Singleton class that reads and holds configuration info for the around how 
     /// performance tracking is configured for the application
     /// </summary>
     public class ConfigInfo
     {
-
         /// <summary>
         /// Constant for the appSettings key that stores the name of the Performance Counter Category
         /// </summary>
-        public const String EnablePerformanceMonitoring = "AspNetPerformance.EnablePerformanceMonitoring";
-
-
-        #region Properties
+        public const string EnablePerformanceMonitoring = "AspNetPerformance.EnablePerformanceMonitoring";
 
         /// <summary>
         /// Property indicating if performance is enabled for the app
@@ -32,44 +24,30 @@ namespace AspNetPerformance
         /// </remarks>
         public bool PerformanceEnabled { get; set; }
 
-
         /// <summary>
         /// Gets the process id of the ASP.NET worker process the application is running inside
         /// </summary>
         public int ProcessId { get; private set; }
 
         /// <summary>
-        /// Gets a String of the name of the Performance Counter Category to use
+        /// Gets a string of the name of the Performance Counter Category to use
         /// </summary>
         /// <remarks>
         /// This performance counter category needs to exist on the machine for performance to
         /// be tracked.  Nominally, it is a good idea to make this name the same as the application
         /// name so it is easy to tell the performance for one app versus another
         /// </remarks>
-        public String PerformanceCategoryName { get; private set; }
-
-        #endregion
-
-
-        #region Static Members
+        public string PerformanceCategoryName { get; private set; }
 
         /// <summary>
         /// Static variable (defined as a System.Lazy) to hold the single instance of the ConfigInfo object
         /// </summary>
         private static Lazy<ConfigInfo> configInfo = new Lazy<ConfigInfo>(() => InitializeConfigInfo());
 
-
         /// <summary>
         /// Property to get the instance of the ConfigValue class
         /// </summary>
-        public static ConfigInfo Value
-        {
-            get
-            {
-                return configInfo.Value;
-            }
-        }
-
+        public static ConfigInfo Value => configInfo.Value;
 
         /// <summary>
         /// Helper method to initialize the ConfigInfo object
@@ -84,12 +62,13 @@ namespace AspNetPerformance
         /// <returns>A ConfigInfo object</returns>
         private static ConfigInfo InitializeConfigInfo()
         {
-            ConfigInfo info = new ConfigInfo();
-            info.ProcessId = Process.GetCurrentProcess().Id;
+            ConfigInfo info = new ConfigInfo
+            {
+                ProcessId = Process.GetCurrentProcess().Id
+            };
 
-
-            String enableperformancemonitoring = ConfigurationManager.AppSettings[EnablePerformanceMonitoring];
-            if (String.IsNullOrWhiteSpace(enableperformancemonitoring))            
+            string enableperformancemonitoring = ConfigurationManager.AppSettings[EnablePerformanceMonitoring];
+            if (string.IsNullOrWhiteSpace(enableperformancemonitoring))
             {
                 Trace.WriteLine("No appSettings value was found to enable performance monitoring");
                 info.PerformanceEnabled = false;
@@ -102,8 +81,5 @@ namespace AspNetPerformance
             }
             return info;
         }
-
-        #endregion
-
     }
 }

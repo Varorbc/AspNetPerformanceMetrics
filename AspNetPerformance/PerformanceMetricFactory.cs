@@ -1,23 +1,15 @@
-﻿using System;
+﻿using AspNetPerformance.Metrics;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AspNetPerformance.Metrics;
 using System.Diagnostics;
-
 
 namespace AspNetPerformance
 {
-
-
     /// <summary>
     /// Factory class 
     /// </summary>
     public static class PerformanceMetricFactory
     {
-
-        #region Static Variables
-
         /// <summary>
         /// Dictionry of all the metrics that have been created through the life of the application
         /// </summary>
@@ -33,16 +25,12 @@ namespace AspNetPerformance
         /// </summary>
         private static Object lockObject;
 
-        #endregion
-
-
         static PerformanceMetricFactory()
         {
             performanceMetrics = new Dictionary<ActionInfo, PerformanceMetricContainer>();
             customMetrics = new List<Func<PerformanceMetricBase>>();
             lockObject = new Object();
         }
-
 
         /// <summary>
         /// Gets a List of performance metrics that will be measured on the action whose data is 
@@ -61,7 +49,7 @@ namespace AspNetPerformance
                     if (performanceMetrics.ContainsKey(info) == false)
                     {
                         List<PerformanceMetricBase> metrics = CreateMetricsForAction(info);
-                         PerformanceMetricContainer pmc = new PerformanceMetricContainer(info, metrics);
+                        PerformanceMetricContainer pmc = new PerformanceMetricContainer(info, metrics);
                         performanceMetrics.Add(info, pmc);
                     }
                 }
@@ -70,19 +58,18 @@ namespace AspNetPerformance
             return performanceMetrics[info].GetPerformanceMetrics();
         }
 
-
-
         private static List<PerformanceMetricBase> CreateMetricsForAction(ActionInfo actionInfo)
         {
-            List<PerformanceMetricBase> metrics = new List<PerformanceMetricBase>();
-
-            // Add the standard metrics
-            metrics.Add(new DeltaCallsMetric(actionInfo));
-            metrics.Add(new TimerForEachRequestMetric(actionInfo));
-            metrics.Add(new ActiveRequestsMetric(actionInfo));
-            metrics.Add(new LastCallElapsedTimeMetric(actionInfo));
-            metrics.Add(new DeltaExceptionsThrownMetric(actionInfo));
-            metrics.Add(new PostAndPutRequestSizeMetric(actionInfo));
+            List<PerformanceMetricBase> metrics = new List<PerformanceMetricBase>
+            {
+                // Add the standard metrics
+                new DeltaCallsMetric(actionInfo),
+                new TimerForEachRequestMetric(actionInfo),
+                new ActiveRequestsMetric(actionInfo),
+                new LastCallElapsedTimeMetric(actionInfo),
+                new DeltaExceptionsThrownMetric(actionInfo),
+                new PostAndPutRequestSizeMetric(actionInfo)
+            };
 
             // Now add any custom metrics the user may have added
             foreach (var x in customMetrics)
@@ -94,16 +81,7 @@ namespace AspNetPerformance
             return metrics;
         }
 
-
-
-
-
-        public static void AddCustomPerformanceMetric(Func<PerformanceMetricBase> customMetricCreator)
-        {
-            customMetrics.Add(customMetricCreator);
-        }
-
-
+        public static void AddCustomPerformanceMetric(Func<PerformanceMetricBase> customMetricCreator) => customMetrics.Add(customMetricCreator);
 
         /// <summary>
         /// Method to clean up the performance counters on application exit
@@ -126,10 +104,5 @@ namespace AspNetPerformance
                 PerformanceCounter.CloseSharedResources();
             }
         }
-
     }
-
-
-
-
 }

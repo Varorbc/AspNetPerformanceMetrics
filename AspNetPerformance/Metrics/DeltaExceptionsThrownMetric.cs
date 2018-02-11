@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using Metrics;
+﻿using Metrics;
 
 namespace AspNetPerformance.Metrics
 {
@@ -16,22 +11,18 @@ namespace AspNetPerformance.Metrics
         public DeltaExceptionsThrownMetric(ActionInfo info)
             : base(info)
         {
-            this.deltaExceptionsThrownCounter
-                = Metric.Context(this.actionInfo.ActionType).Meter(COUNTER_NAME, Unit.Errors, TimeUnit.Seconds);
+            deltaExceptionsThrownCounter = Metric.Context(actionInfo.ActionType).Meter(COUNTER_NAME, Unit.Errors, TimeUnit.Seconds);
         }
-
 
         /// <summary>
         /// Constant defining the name of this counter
         /// </summary>
-        public const String COUNTER_NAME = "Errors";
-
+        public const string COUNTER_NAME = "Errors";
 
         /// <summary>
         /// Reference to the performance counter 
         /// </summary>
         private Meter deltaExceptionsThrownCounter;
-
 
         /// <summary>
         /// Method called by the custom action filter after the action completes
@@ -43,16 +34,16 @@ namespace AspNetPerformance.Metrics
         public override void OnActionComplete(long elapsedTicks, bool exceptionThrown)
         {
             if (exceptionThrown)
-                this.deltaExceptionsThrownCounter.Mark();
+            {
+                deltaExceptionsThrownCounter.Mark();
+            }
         }
-
 
         /// <summary>
         /// Disposes of the Performance Counter when the metric object is disposed
         /// </summary>
         public override void Dispose()
         {
-            //this.deltaExceptionsThrownCounter.Dispose();
         }
     }
 }

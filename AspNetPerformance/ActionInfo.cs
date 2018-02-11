@@ -1,38 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AspNetPerformance
+﻿namespace AspNetPerformance
 {
     /// <summary>
     /// Class to hold information about the action method which performance metrics are being gathered
     /// </summary>
     public class ActionInfo
     {
-
-        public ActionInfo(int processId, String actionType, String controllerName,
-            String actionName, String httpMethod, String paramters, int contentLength)
+        public ActionInfo(int processId, string actionType, string controllerName,
+            string actionName, string httpMethod, string paramters, int contentLength)
         {
-            this.ProcessId = processId;
-            this.ActionType = actionType;
-            this.ControllerName = controllerName;
-            this.ActionName = actionName;
-            this.HttpMethod = httpMethod;
-            this.Parameters = paramters;
-            this.ContentLength = contentLength;
+            ProcessId = processId;
+            ActionType = actionType;
+            ControllerName = controllerName;
+            ActionName = actionName;
+            HttpMethod = httpMethod;
+            Parameters = paramters;
+            ContentLength = contentLength;
 
-            this.InstanceName = this.DetermineRawInstanceName();
-            this.SanitizedInstanceName = 
-                InstanceNameRegistry.GetSanitizedInstanceName(this.InstanceName);
+            InstanceName = DetermineRawInstanceName();
+            SanitizedInstanceName = InstanceNameRegistry.GetSanitizedInstanceName(InstanceName);
         }
-
 
         /// <summary>
         /// Gets/Sets the name of the performance counter category.
         /// </summary>
-        public String PerformaneCounterCategory { get; private set; }
-
+        public string PerformaneCounterCategory { get; private set; }
 
         /// <summary>
         /// Gets/Sets the int of the Process ID the application is running under
@@ -46,19 +37,19 @@ namespace AspNetPerformance
         public int ProcessId { get; private set; }
 
         /// <summary>
-        /// Gets/Sets a String which indicates if the Action was an MVC or WebApi action
+        /// Gets/Sets a string which indicates if the Action was an MVC or WebApi action
         /// </summary>
-        public String ActionType { get; private set; }
+        public string ActionType { get; private set; }
 
         /// <summary>
         /// Gets/Sets the nme of the controller this action belongs to
         /// </summary>
-        public String ControllerName { get; private set; }
+        public string ControllerName { get; private set; }
 
         /// <summary>
         /// Gets/sets the name of this action
         /// </summary>
-        public String ActionName { get; private set; }
+        public string ActionName { get; private set; }
 
         /// <summary>
         /// Gets/Sets the HttpMethod (GET, POST, PUT, DELETE, etc) used for this action.
@@ -67,53 +58,36 @@ namespace AspNetPerformance
         /// In MVC, some actions (typically an EDIT) have both definition for both GET and
         /// POST.  This value helps differentiate between those two calls
         /// </remarks>
-        public String HttpMethod { get; private set; }
-
+        public string HttpMethod { get; private set; }
 
         /// <summary>
-        /// Gets/Sets a String that represents the parameters passed to this action
+        /// Gets/Sets a string that represents the parameters passed to this action
         /// </summary>
         /// <remarks></remarks>
-        public String Parameters { get; private set; }
-
+        public string Parameters { get; private set; }
 
         /// <summary>
         /// Gets the instance name that will be used to record performance for performance metrics
         /// (counters) on the action represented by this object
         /// </summary>
-        public String InstanceName { get; private set; }
-
+        public string InstanceName { get; private set; }
 
         /// <summary>
         /// Gets a sanitized version of the instane name that is safe to pass to the 
         /// PerformanceCounter object (i.e. will be 128 chars or less)
         /// </summary>
-        public String SanitizedInstanceName { get; set; }
+        public string SanitizedInstanceName { get; set; }
 
         /// <summary>
         /// ContentLength
         /// </summary>
         public int ContentLength { get; set; }
 
-
         /// <summary>
         /// Helper method to determine the instance name to use from all the paramters
         /// </summary>
         /// <returns></returns>
-        private String DetermineRawInstanceName()
-        {
-            String rawInstanceName = String.Format("[{0}]-{1} {2}.{3}[{5}] {4}",
-                this.ProcessId,
-                this.ActionType,
-                this.ControllerName,
-                this.ActionName,
-                this.HttpMethod,
-                this.Parameters);
-            return rawInstanceName;
-        }
-
-
-        #region Utility Methods
+        private string DetermineRawInstanceName() => $"[{ProcessId}]-{ActionType} {ControllerName}.{ActionName}[{Parameters}] {HttpMethod}";
 
         /// <summary>
         /// Checks to see if the given object is equivalent to this object
@@ -125,11 +99,12 @@ namespace AspNetPerformance
         /// <returns>True if the objects represent the same controller action.  False otherwise</returns>
         public override bool Equals(object obj)
         {
-            ActionInfo other = obj as ActionInfo;
             if (obj == null)
+            {
                 return false;
+            }
 
-            return this.InstanceName.Equals(other.InstanceName);
+            return InstanceName.Equals(((ActionInfo)obj).InstanceName);
         }
 
         /// <summary>
@@ -141,12 +116,6 @@ namespace AspNetPerformance
         /// In this case, it will be based off of the instance name
         /// </remarks>
         /// <returns>An int of the hash code</returns>
-        public override int GetHashCode()
-        {
-            return this.InstanceName.GetHashCode();
-        }
-
-        #endregion
-
+        public override int GetHashCode() => InstanceName.GetHashCode();
     }
 }
