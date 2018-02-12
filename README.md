@@ -1,9 +1,11 @@
-AspNetPerformanceMetrics
-========================
+#如何使用
 
-AspNetPerformanceMetrics adds the metrics provided by the [Metrics.NET](https://github.com/etishor/Metrics.NET) to ASP.NET MVC 
+配置：
 
-In Global
+    Metric.Config.WithHttpEndpoint("http://localhost:1234/").WithAllCounters().WithInternalMetrics();
+    config.Filters.Add(new WebApiPerformanceAttribute());
+
+在 Global.cs中配置
 
     protected void Application_End()
     {
